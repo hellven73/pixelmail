@@ -6,7 +6,8 @@ const url=config.match(/url: '([^']+)'/)[1], key=config.match(/anonKey: '([^']+)
 
 const suffix=randomBytes(5).toString('hex');
 const users=['pmtesta_'+suffix,'pmtestb_'+suffix,'pmtestc_'+suffix];
-const password=randomBytes(24).toString('base64url');
+const password=randomBytes(6).toString('base64url').slice(0,7);
+await assert.rejects(request('/functions/v1/pixelmail-register','POST',{username:users[0],password:password.slice(0,6)},undefined,{Origin:'https://hellven73.github.io'}), /returned 400/);
 async function request(path,method='GET',body,token,extra={}){
   const response=await fetch(url+path,{method,headers:{apikey:key,Authorization:'Bearer '+(token||key),'Content-Type':'application/json',...extra},body:body===undefined?undefined:JSON.stringify(body)});
   const raw=await response.text();

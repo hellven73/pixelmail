@@ -11,7 +11,7 @@ Deno.serve(async req=>{
  const input=await req.text();
  if(input.length>4096)return reply(413,"Request too large");
  const {username,password}=JSON.parse(input);
- if(typeof username!=="string"||!/^[a-z0-9_]{3,24}$/.test(username)||["admin","support","pixelmail","system","postmaster"].includes(username)||typeof password!=="string"||password.length<10||password.length>72||new TextEncoder().encode(password).length>72)return reply(400,"Choose a valid username and a password of 10 to 72 bytes.");
+ if(typeof username!=="string"||!/^[a-z0-9_]{3,24}$/.test(username)||["admin","support","pixelmail","system","postmaster"].includes(username)||typeof password!=="string"||password.length<7||password.length>72||new TextEncoder().encode(password).length>72)return reply(400,"Choose a valid username and a password of at least 7 characters and at most 72 bytes.");
  const url=Deno.env.get("SUPABASE_URL"), secret=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
  if(!url||!secret)return reply(503,"Registration unavailable");
  const admin=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false}});
