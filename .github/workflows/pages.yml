@@ -12,14 +12,16 @@ concurrency:
   cancel-in-progress: true
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: npm run check
-      - run: node tests/live-smoke.mjs
+      - name: Live account and attachment checks
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[live-test]')
+        run: node tests/live-smoke.mjs
   deploy:
     needs: check
     runs-on: ubuntu-latest
@@ -29,8 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
+
       - run: mkdir -p _site && cp index.html style.css app.js motion.js config.js .nojekyll _site/
       - uses: actions/upload-pages-artifact@v3
         with:
