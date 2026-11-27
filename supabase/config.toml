@@ -1,0 +1,4 @@
+project_id = "pixelmail"
+
+[functions.pixelmail-register]
+verify_jwt = false

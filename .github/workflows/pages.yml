@@ -3,6 +3,17 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      live_tests:
+        description: Run live API tests (creates temporary accounts)
+        required: false
+        type: boolean
+        default: false
+      browser_tests:
+        description: Run browser integration tests (creates temporary accounts)
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: read
   pages: write
@@ -20,8 +31,13 @@ jobs:
           node-version: '22'
       - run: npm run check
       - name: Live account and attachment checks
-        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[live-test]')
+        if: inputs.live_tests == true || contains(github.event.head_commit.message, '[live-test]')
         run: node tests/live-smoke.mjs
+      - name: Browser integration checks
+        if: inputs.browser_tests == true || contains(github.event.head_commit.message, '[browser-test]')
+        run: |
+          npm install --no-save --package-lock=false playwright-core@1.56.1
+          node tests/browser-smoke.mjs
   deploy:
     needs: check
     runs-on: ubuntu-latest
