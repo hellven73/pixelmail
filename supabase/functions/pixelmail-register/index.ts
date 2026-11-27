@@ -18,8 +18,11 @@ Deno.serve(async req=>{
  const {data:allowed,error:limitError}=await admin.rpc("pixelmail_reserve_signup");
  if(limitError)return reply(503,"Registration unavailable");
  if(!allowed)return reply(429,"Registration limit reached. Try again later.");
- const {error}=await admin.auth.admin.createUser({email:username+"@pixelmail.invalid",password,email_confirm:true,app_metadata:{pixelmail_internal:true}});
+ const {data,error}=await admin.auth.admin.createUser({email:username+"@pixelmail.invalid",password,email_confirm:true,app_metadata:{pixelmail_internal:true}});
  if(error)return reply(409,"Account could not be created. Choose another username or try again.");
+ if(!data.user)return reply(503,"Account creation unavailable");
+ const {error:profileError}=await admin.rpc("pixelmail_provision_profile",{account_id:data.user.id});
+ if(profileError)return reply(503,"Account created, but profile setup is incomplete. Try signing in.");
  return reply(201,"Account created");
  }catch{return reply(400,"Invalid registration request")}
 });
