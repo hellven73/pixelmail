@@ -7,8 +7,6 @@ Deno.serve(async req=>{
  if(req.method!=="POST")return reply(405,"Method not allowed");
  if(req.headers.get("origin")!==origin)return reply(403,"Invalid origin");
  try{
- const expected=Deno.env.get("SUPABASE_ANON_KEY");
- if(!expected||req.headers.get("apikey")!==expected)return reply(401,"Invalid application key");
  if(Number(req.headers.get("content-length")||0)>4096)return reply(413,"Request too large");
  const input=await req.text();
  if(input.length>4096)return reply(413,"Request too large");
