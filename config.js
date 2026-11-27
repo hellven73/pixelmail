@@ -1,0 +1,1 @@
+window.PIXELMAIL_CONFIG = { url: 'https://ghfhmdejkqkcitzdyepj.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoZmhtZGVqa3FrY2l0emR5ZXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU3Njc0NTEsImV4cCI6MjExMTM0MzQ1MX0.wv47pv8uCHJExALmRgLaqb55Aa6RWW_jISNXCW1dGow' };
