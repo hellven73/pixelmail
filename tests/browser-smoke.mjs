@@ -41,11 +41,9 @@ async function cleanup(){
     const tokens=await Promise.all(pages.map(token));
     const headers=t=>({apikey:key,Authorization:'Bearer '+t,'Content-Type':'application/json'});
     const path='/rest/v1/mailbox?subject=eq.'+encodeURIComponent(subject);
-    const response=await fetch(api+path+'&select=attachments',{headers:headers(tokens[0])});
-    const messages=await response.json();
-    const attachments=messages.flatMap(x=>x.attachments||[]).map(x=>x.path).filter(Boolean);
     for(const t of tokens)await fetch(api+path,{method:'DELETE',headers:headers(t)});
-    if(attachments.length)await fetch(api+'/storage/v1/object/mail-attachments',{method:'DELETE',headers:headers(tokens[0]),body:JSON.stringify({prefixes:attachments})});
+    const profile=await fetch(api+'/auth/v1/user',{headers:headers(tokens[0])}).then(r=>r.json());
+    if(profile.id){const objects=await fetch(api+'/storage/v1/object/list/mail-attachments',{method:'POST',headers:headers(tokens[0]),body:JSON.stringify({prefix:profile.id,limit:100})}).then(r=>r.json());const attachments=Array.isArray(objects)?objects.map(x=>profile.id+'/'+x.name):[];if(attachments.length)await fetch(api+'/storage/v1/object/mail-attachments',{method:'DELETE',headers:headers(tokens[0]),body:JSON.stringify({prefixes:attachments})})}
   }catch(e){console.log('Browser cleanup needs review: '+e.message)}
 }
 try{
